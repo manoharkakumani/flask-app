@@ -6,7 +6,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.1/css/all.css">
     <style>
         .hide {
             display: none;
@@ -15,6 +15,20 @@
     <script>
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
+        }
+        function request_edit(){
+            var request_edit = document.getElementById("request_edit");
+            var request_edit_button = document.getElementById("request_edit_button");
+            if (request_edit_button.innerHTML === "Cancel") {
+                request_edit.classList.add("hide");
+                request_edit_button.innerHTML = "Edit Request";
+                document.getElementById("request_id_input").removeAttribute("required");
+            } 
+            else {
+                request_edit.classList.remove("hide");
+                request_edit_button.innerHTML = "Cancel";
+                document.getElementById("request_id_input").setAttribute("required", "");  
+            }
         }
         setTimeout(function () { $(".alert-success").addClass('hide'); }, 5000);  // 5 seconds
         setTimeout(function () { $(".alert-danger").addClass('hide'); }, 5000);  // 5 seconds
@@ -25,49 +39,60 @@
     <div class="card" style="border:None;">
         <article class=" card-body mx-auto">
             <h4 class="card-title mt-3 text-center">User Form</h4>
+            <form action="/order" method="GET" enctype="multipart/form-data">
+                <!--get form-->
+                <div class="input-group">
+                    <input name="order_id" type="search" class="form-control rounded" placeholder="Order Id" aria-label="Order Id" aria-describedby="search-addon" required/>
+                    <button type="submit" class="btn btn-primary">Get Details</button>
+                  </div>
+            </form><br>
+            {% if form_details %}
             <form method="POST" enctype="multipart/form-data">
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                     </div>
-                    <input name="name" class="form-control" placeholder="Name" type="text" required>
+                    <input name="name" class="form-control" placeholder="Name" type="text" value="{{form_details.Name}}" required readonly>
                 </div>
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
+                        <span class="input-group-text"> <i class="fa-solid fa-city"></i> </span>
                     </div>
-                    <input name="email" class="form-control" placeholder="Email address" type="email" required>
+                    <input name="city" class="form-control" placeholder="City" type="text" value="{{form_details.City}}" required readonly>
                 </div>
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-phone"></i> </span>
+                        <span class="input-group-text"> <i class="fa-solid fa-clock"></i> </span>
                     </div>
-                    <select name="country_code" class="custom-select" style="max-width: 80px;">
-                        <option selected="">+91</option>
-                        <option value="1">+1</option>
-                        <option value="2">+44</option>
-                    </select>
-                    <input name="phone" class="form-control" placeholder="Phone number" type="tel" max="10" pattern="[0-9]{10}" required>
+                    <input name="slot" class="form-control" placeholder="Order Slot" type="text" required>
                 </div>
                 <div class=" form-group input-group">
                     <input name="file" type="file" class="form-control" type="file">
                 </div>
+                <div id="request_edit" class="form-group input-group hide">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> <i class="fa-solid fa-square-check"></i> </span>
+                    </div>
+                    <input id="request_id_input" name="request_id" class="form-control" placeholder="Request Id" type="text">
+                </div>
                 <div <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block"> Submit </button>
+                    <button type="button" id="request_edit_button" class="btn btn-primary" onclick="request_edit()">Edit Request</button>
+                    <button type="submit" class="btn btn-primary "> Submit </button>
                 </div>
-                {% if is_success %}
-                <div class="alert alert-success" role="alert">
-                    <p>File uploaded successfully</p>
-                </div>
-                {% else %}
-                {% if is_error %}
-                <div class="alert alert-danger" role="alert">
-                    <h4 class="alert-heading">Oh snap!</h4>
-                    <p>File upload failed. Try Again! </p>
-                </div>
-                {% endif %}
-                {% endif %}
             </form>
+            {% endif %}
+            {% if is_success %}
+            <div class="alert alert-success" role="alert">
+                <p>{{message}} </p>
+            </div>
+            {% else %}
+            {% if is_error %}
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Oh snap!</h4>
+                <p>{{message}} </p>
+            </div>
+            {% endif %}
+            {% endif %}
         </article>
     </div>
 </body>
