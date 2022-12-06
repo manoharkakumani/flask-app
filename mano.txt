@@ -1,0 +1,10 @@
+        if form_file:
+            time_now = time.strftime("%Y_%m_%d-%H_%M_%S")
+            folder_name = f"{city}-{slot}_{time_now}"
+            user_folder = ctx.web.ensure_folder_path(f"{document_library_path}/{folder_name}").execute_query()
+            created_folder_url = f"{sharepoint_url}{user_folder.serverRelativeUrl}"
+            print(f"Folder created: {created_folder_url}")
+            form_file_name = form_file.filename
+            form_file_url = user_folder.upload_file(form_file.filename, form_file.read()).execute_query()
+            print("File has been uploaded to url: {0}".format(form_file_url.serverRelativeUrl))
+            form_file_url = f"{sharepoint_url}{form_file_url.serverRelativeUrl}"
